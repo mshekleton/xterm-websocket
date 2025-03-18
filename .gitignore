@@ -1,0 +1,70 @@
+# --- Python/Django ---
+__pycache__/
+*.py[cod]
+*.so
+*.log
+*.sqlite3
+*.pot
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+media/
+venv/
+env/
+*.egg-info/
+instance/
+.settings/
+*.DS_Store
+
+# Django secret settings
+.env
+*.env
+
+# Migrations (optional, you may want to include these in version control)
+**/migrations/**/*
+!**/migrations/__init__.py
+
+# --- Node.js / React ---
+node_modules/
+npm-debug.log
+yarn-error.log
+.yarn-integrity
+.yarn/
+package-lock.json
+yarn.lock
+build/
+dist/
+.cache/
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+
+# --- Logs and system files ---
+logs/
+*.log
+*.out
+*.pid
+*.seed
+*.pem
+*.crt
+*.key
+*.env.local
+*.env.development
+*.env.production
+*.env.test
+.env.example
+
+# --- IDE and OS-specific ---
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+*.swp
+*.swo
+*.swn
+.DS_Store
+Thumbs.db
+desktop.ini
