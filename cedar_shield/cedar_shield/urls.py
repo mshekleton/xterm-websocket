@@ -19,6 +19,11 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+# Change admin site title, header and index title
+admin.site.site_header = "Phigitals Admin"  # Header on login page and admin
+admin.site.site_title = "Phigitals Admin Portal"  # Browser tab title
+admin.site.index_title = "Welcome to Phigitals Admin"  # Title on admin index page
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     #path('api/', include('assets.urls')),  # Include your app's URL patterns under `/api/`

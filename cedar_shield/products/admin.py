@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import Product, Item, ItemImage
+from .models import Product, Item, ProductImage
 from django.utils.html import format_html
 
-class ItemImageInline(admin.TabularInline):  # or use StackedInline for a different layout
-    model = ItemImage
-    extra = 1  # Number of empty forms to display
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    extra = 1
     readonly_fields = ('thumbnail_preview',)
     fields = ('image', 'is_primary', 'thumbnail_preview')
     
@@ -14,10 +14,12 @@ class ItemImageInline(admin.TabularInline):  # or use StackedInline for a differ
         return "No image"
     thumbnail_preview.short_description = 'Preview'
 
-@admin.register(Item)
-class ItemAdmin(admin.ModelAdmin):
-    inlines = [ItemImageInline]
-    list_display = ('product', 'seller', 'price', 'image_count', 'thumbnail')
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    inlines = [ProductImageInline]
+    list_display = ('sku', 'name', 'brand', 'category', 'image_count', 'thumbnail')
+    list_filter = ('brand', 'category')
+    search_fields = ('sku', 'name', 'model')
     
     def image_count(self, obj):
         return obj.images.count()
@@ -31,14 +33,20 @@ class ItemAdmin(admin.ModelAdmin):
         return "-"
     thumbnail.short_description = 'Thumbnail'
 
-@admin.register(ItemImage)
-class ItemImageAdmin(admin.ModelAdmin):
-    list_display = ('item', 'thumbnail_preview', 'is_primary')
+@admin.register(Item)
+class ItemAdmin(admin.ModelAdmin):
+    list_display = ('uuid', 'product', 'seller', 'price', 'is_approved')
+    list_filter = ('is_approved', 'seller')
+    search_fields = ('uuid', 'product__name', 'product__sku')
+    # Removed the ProductImageInline because it's now related to Product, not Item
+
+@admin.register(ProductImage)
+class ProductImageAdmin(admin.ModelAdmin):
+    list_display = ('product', 'thumbnail_preview', 'is_primary')
+    list_filter = ('product', 'is_primary')
     
     def thumbnail_preview(self, obj):
         if obj.image:
             return format_html('<img src="{}" width="100" height="100" style="object-fit: cover;" />', obj.image.url)
         return "No image"
     thumbnail_preview.short_description = 'Preview'
-
-

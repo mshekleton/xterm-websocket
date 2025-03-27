@@ -10,6 +10,8 @@ class User(models.Model):
     date_joined = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     is_verified = models.BooleanField(default=False)
+    seller_rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.0)
+    buyer_rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.0)
 
     # Contact information
     phone = models.CharField(max_length=20, blank=True)
@@ -29,17 +31,20 @@ class User(models.Model):
     billing_postal_code = models.CharField(max_length=20, blank=True)
 
     
-    # Inventory products - using related_name to access from both directions
-#    products_bought = models.ManyToManyField(
-#        'inventory.Product',
-#        related_name='buyers',
-#        blank=True
-#    )
-#    products_selling = models.ManyToManyField(
-#        'inventory.Product',
-#        related_name='sellers', 
-#        blank=True
-#    )
+    # Payment information
+    royalties_payment_method = models.CharField(max_length=20, choices=[
+        ('credit_card', 'Credit Card'),
+        ('paypal', 'PayPal'),
+        ('bank_transfer', 'Bank Transfer'),
+        ('crypto', 'Crypto'),
+        ('other', 'Other')
+    ])
+    royalties_payment_account_id = models.CharField(max_length=100, blank=True)
+
+    # User's listings and items
+    #listings = models.ManyToManyField('marketplace.Listing', related_name='sellers', blank=True)
+    #purchased_items = models.ManyToManyField('marketplace.Item', related_name='buyers', blank=True)
+
 
     def __str__(self):
         return f"{self.username} ({self.email})"

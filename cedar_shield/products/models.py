@@ -1,6 +1,7 @@
 from django.db import models
 from brands.models import Brand
 from users.models import User
+import uuid
 
 class Product(models.Model):
     sku = models.CharField(max_length=100, primary_key=True)
@@ -53,6 +54,7 @@ class Product(models.Model):
         return f"{self.name} ({self.sku})"
 
 class Item(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="items")
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -61,19 +63,19 @@ class Item(models.Model):
     def __str__(self):
         return f"{self.product} by {self.seller.username}"
 
-class ItemImage(models.Model):
-    item = models.ForeignKey(Item, related_name='images', on_delete=models.CASCADE)
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='item_images/')
     is_primary = models.BooleanField(default=False)
     
     def save(self, *args, **kwargs):
-        # If this is the first image for the item, make it primary
-        if not self.item.images.exists():
+        # If this is the first image for the product, make it primary
+        if not self.product.images.exists():
             self.is_primary = True
         # If this image is being set as primary, unset any existing primary
         elif self.is_primary:
-            self.item.images.filter(is_primary=True).update(is_primary=False)
+            self.product.images.filter(is_primary=True).update(is_primary=False)
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Image {self.id} for {self.item}"
+        return f"Image {self.id} for {self.product}"
