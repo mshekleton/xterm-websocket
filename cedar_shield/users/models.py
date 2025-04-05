@@ -1,6 +1,12 @@
 from django.db import models
 
-# Create your models here.
+
+class Interest(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+
 class User(models.Model):
     # Basic user information
     username = models.CharField(max_length=100, unique=True)
@@ -65,3 +71,42 @@ class User(models.Model):
     class Meta:
         ordering = ['-date_joined']
 
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(blank=True)
+    interests = models.ManyToManyField(Interest, blank=True)
+    favorite_brands = models.JSONField(default=list, blank=True)
+    favorite_categories = models.JSONField(default=list, blank=True)
+    liked_items = models.ManyToManyField('products.Item', related_name='liked_by', blank=True)
+    viewed_items = models.ManyToManyField('products.Item', related_name='viewed_by', through='ViewEvent', blank=True)
+    saved_searches = models.JSONField(default=list, blank=True)
+
+    def __str__(self):
+        return f"{self.user.username} Profile"
+
+
+class ViewEvent(models.Model):
+    user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    item = models.ForeignKey('products.Item', on_delete=models.CASCADE)
+    viewed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user_profile', 'item')
+        indexes = [
+            models.Index(fields=['user_profile', 'item']),
+        ]
+
+
+# marketplace/models.py
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+class Brand(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name

@@ -1,6 +1,6 @@
 from django.db import models
 from brands.models import Brand
-from users.models import User
+from django.conf import settings
 import uuid
 
 class Product(models.Model):
@@ -56,7 +56,7 @@ class Product(models.Model):
 class Item(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="items")
+    seller = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name="items")
     price = models.DecimalField(max_digits=10, decimal_places=2)
     is_approved = models.BooleanField(default=False) #Admin approval for listing
 
